@@ -1,3 +1,10 @@
+[Changes for 0.10 - 2004-09-09]
+
+* "make initialize-database" added as an alias to "make initdb",
+  for better consistency with core RT installation.
+
+  Reported by: Sika.
+
 [Changes for 0.09 - 2004-09-09]
 
 * Moved under SVK management; remove all keyword expansion lines.

@@ -1,7 +1,7 @@
 package Module::Install::RTx;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 
-$Module::Install::RTx::VERSION = '0.09';
+$Module::Install::RTx::VERSION = '0.10';
 
 use strict;
 use FindBin;
@@ -124,7 +124,7 @@ dropdb ::
     if (%has_etc) {
         $self->load('RTxInitDB');
         print "For first-time installation, type 'make initdb'.\n";
-        my $initdb = "initdb ::\n";
+        my $initdb = '';
         $initdb .= <<"." if $has_etc{schema};
 \t\$(NOECHO) \$(PERL) -Ilib -I"$lib_path" -Minc::Module::Install -e"RTxInitDB(qw(schema))"
 .
@@ -134,7 +134,8 @@ dropdb ::
         $initdb .= <<"." if $has_etc{initialdata};
 \t\$(NOECHO) \$(PERL) -Ilib -I"$lib_path" -Minc::Module::Install -e"RTxInitDB(qw(insert))"
 .
-        $self->postamble("$initdb\n");
+        $self->postamble("initdb ::\n$initdb\n");
+        $self->postamble("initialize-database ::\n$initdb\n");
     }
 }
 
@@ -157,8 +158,8 @@ Module::Install::RTx - RT extension installer
 
 =head1 VERSION
 
-This document describes version 0.09 of Module::Install::RTx, released
-September 9, 2004.
+This document describes version 0.10 of Module::Install::RTx, released
+October 1, 2004.
 
 =head1 SYNOPSIS
 

@@ -1,12 +1,12 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.35.
+signed via the Module::Signature module, version 0.41.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
 
     % cpansign -v
 
-It would check each file's integrity, as well as the signature's
+It will check each file's integrity, as well as the signature's
 validity.  If "==> Signature verified OK! <==" is not displayed,
 the distribution may already have been compromised, and you should
 not run its Makefile.PL or Build.PL.
@@ -14,24 +14,24 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 26e60b805af9201a4f7c80efb00380538eec02c3 Changes
+SHA1 46e2739f79a1f825869fe6a9530583f7ad2373ec Changes
 SHA1 3560a4f3080832ac4fa5a046e0dc24304948af7b MANIFEST
-SHA1 9f4f5cf3f9b89bda2abefedc8b14691bb0c0c9eb META.yml
+SHA1 1a52fdbb24e36b07cf26411bcf6e9a67462c58d9 META.yml
 SHA1 1b8f7b0cf58b8d8f2d2e8211567e88175a219591 Makefile.PL
 SHA1 8c6873ba1088180c7f3b781a05893acf5b60d13c README
-SHA1 70167f0c4fe8eda21309675d92ff9ed0affbc8ad inc/Module/Install.pm
-SHA1 f0d2e3bd1c59057783c09cd91f8520de97c7b9b3 inc/Module/Install/Base.pm
-SHA1 2e7337f5a52849b9340b21cadcea3d1e843340df inc/Module/Install/Makefile.pm
-SHA1 0498bcc5507c0f656774bdcbdd5014ed4d67366a inc/Module/Install/Metadata.pm
-SHA1 239c6e05cda397db72b339377949f715b39f6b37 inc/Module/Install/WriteAll.pm
-SHA1 85ce39e5731c21b5a6929d27b3871327d097ee87 lib/Module/Install/RTx.pm
+SHA1 02597776ad22aacd2c8e189594fcbf701390b606 inc/Module/Install.pm
+SHA1 7ca8b8f54287c2b5af8062fc9f349275a07e06f3 inc/Module/Install/Base.pm
+SHA1 c4ed10cd20914c04f3fff3f8aaf8943372cec114 inc/Module/Install/Makefile.pm
+SHA1 ccf9b6267b5c9e7b35ef129f7e974255955c8867 inc/Module/Install/Metadata.pm
+SHA1 1022a7ab797fc0081ea947f102650362ad925d7a inc/Module/Install/WriteAll.pm
+SHA1 ab893815724c3be9119b0cfac34d45c0f1b3feb7 lib/Module/Install/RTx.pm
 SHA1 edef27ae5528d85c37aaaa022a78959ae2c35326 lib/Module/Install/RTx/Factory.pm
 SHA1 f25476ae528b00b04317c108f54db52537124385 t/0-signature.t
 SHA1 d1273fb540399cb1cb61dc519c34315dfdf7b15a t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (Darwin)
+Version: GnuPG v1.2.3 (FreeBSD)
 
-iD8DBQFBQHjutLPdNzw1AaARAjkPAJ9QquC0adcoyVTjsKxhsejRluWK0gCeN/vO
-5ihULrsPbM8ZRgpZDKdNVdY=
-=GiAT
+iD8DBQFBXZPYtLPdNzw1AaARAswFAJ9l8A8gdtK7D5rV1CNG4YV/8aIe5QCgitCl
+QvhYOD/MCcA6Ee34koBfloo=
+=TNyM
 -----END PGP SIGNATURE-----
