@@ -1,4 +1,47 @@
 ____________________________________________________________________________
+[  9652] By: autrijus                              on 2004/01/10  13:48:42
+        Log: * This be 0.04.
+             * Update copyright years.
+	   ! README lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9643] By: autrijus                              on 2004/01/10  08:46:06
+        Log: * make var directory writable
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9428] By: autrijus                              on 2003/12/25  13:19:26
+        Log: * Some people insist on doing "make initialize-database"
+             before "make install".	Fancy that.
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9412] By: autrijus                              on 2003/12/25  09:13:55
+        Log: * now add include path too.
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9411] By: autrijus                              on 2003/12/25  09:09:16
+        Log: * be extra careful on win32.
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9409] By: autrijus                              on 2003/12/25  09:02:40
+        Log: * add etc/initialdata insertion.
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9348] By: autrijus                              on 2003/12/19  03:47:59
+        Log: * take care of "inplace" layout by also probing in
+	       lib/RT.pm.
+             * now takes WITH_SUBDIRS to restrict the subdirectories to
+	       install.
+             * some POD cleanups.
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9320] By: autrijus                              on 2003/12/15  06:14:33
+        Log: * add proper no_index.
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9317] By: autrijus                              on 2003/12/15  05:10:12
+        Log: * need to depend on Module::Install::Admin, as 
+             Module::Install always satisfies itself.
+	   ! Makefile.PL
+____________________________________________________________________________
 [  9316] By: autrijus                              on 2003/12/15  05:03:39
         Log: * This be 0.01, first CPAN release.
 	   + MANIFEST README t/0-signature.t t/1-basic.t

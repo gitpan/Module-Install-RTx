@@ -1,6 +1,6 @@
 #line 1 "inc/Module/Install/Makefile.pm - /usr/local/lib/perl5/site_perl/5.8.2/Module/Install/Makefile.pm"
 # $File: //depot/cpan/Module-Install/lib/Module/Install/Makefile.pm $ $Author: autrijus $
-# $Revision: #52 $ $Change: 1811 $ $DateTime: 2003/12/14 18:52:33 $ vim: expandtab shiftwidth=4
+# $Revision: #53 $ $Change: 1847 $ $DateTime: 2003/12/31 23:14:54 $ vim: expandtab shiftwidth=4
 
 package Module::Install::Makefile;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
@@ -143,4 +143,4 @@ sub postamble {
 
 __END__
 
-#line 275
+#line 276

@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Install-RTx/README $ $Author: autrijus $
-# $Revision: #1 $ $Change: 9316 $ $DateTime: 2003/12/15 05:03:39 $ vim: expandtab shiftwidth=4
+# $Revision: #2 $ $Change: 9652 $ $DateTime: 2004/01/10 13:48:42 $ vim: expandtab shiftwidth=4
 
 This is the README file for Module::Install::RTx, a helper module
 for RT extension writers to install files into an existing RT
@@ -20,7 +20,7 @@ make install
 
 * Copyright
 
-Copyright 2003 by Autrijus Tang <autrijus@autrijus.org>
+Copyright 2003, 2004 by Autrijus Tang <autrijus@autrijus.org>
 
 All rights reserved.  You can redistribute and/or modify
 this bundle under the same terms as Perl itself.
