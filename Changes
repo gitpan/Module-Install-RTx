@@ -1,0 +1,9 @@
+____________________________________________________________________________
+[  9316] By: autrijus                              on 2003/12/15  05:03:39
+        Log: * This be 0.01, first CPAN release.
+	   + MANIFEST README t/0-signature.t t/1-basic.t
+	   ! Makefile.PL lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9315] By: autrijus                              on 2003/12/15  04:29:20
+        Log: * initial checkin for Module::Install::RTx.
+	   + Makefile.PL lib/Module/Install/RTx.pm
