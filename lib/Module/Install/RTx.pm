@@ -1,7 +1,7 @@
 package Module::Install::RTx;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 
-$Module::Install::RTx::VERSION = '0.10';
+$Module::Install::RTx::VERSION = '0.11';
 
 use strict;
 use FindBin;
@@ -158,8 +158,8 @@ Module::Install::RTx - RT extension installer
 
 =head1 VERSION
 
-This document describes version 0.10 of Module::Install::RTx, released
-October 1, 2004.
+This document describes version 0.11 of Module::Install::RTx, released
+February 27, 2004.
 
 =head1 SYNOPSIS
 
@@ -231,7 +231,7 @@ Autrijus Tang <autrijus@autrijus.org>
 
 =head1 COPYRIGHT
 
-Copyright 2003, 2004 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
+Copyright 2003, 2004, 2005 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
