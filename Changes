@@ -1,4 +1,16 @@
 ____________________________________________________________________________
+[  9841] By: autrijus                              on 2004/02/01  20:07:17
+        Log: * This be 0.05.
+             * Now installs libs to $RT::LocalPath/lib instead of
+             perl's sitelib.
+             * Now properly skips lib installation when WITH_SUBDIRS
+             does not include lib.
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
+[  9831] By: autrijus                              on 2004/02/01  15:55:08
+        Log: * allow overriding prefix with $ENV{PREFIX}
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
 [  9652] By: autrijus                              on 2004/01/10  13:48:42
         Log: * This be 0.04.
              * Update copyright years.
