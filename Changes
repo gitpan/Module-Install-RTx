@@ -1,4 +1,11 @@
 ____________________________________________________________________________
+[ 10586] By: autrijus                              on 2004/05/10  16:39:52
+        Log: * This be 0.06.
+             * Support "make factory", "make initdb", "make dropdb"
+             for extensions that has its own initialdata and schema.
+	   + lib/Module/Install/RTx/Factory.pm
+	   ! lib/Module/Install/RTx.pm
+____________________________________________________________________________
 [  9841] By: autrijus                              on 2004/02/01  20:07:17
         Log: * This be 0.05.
              * Now installs libs to $RT::LocalPath/lib instead of

@@ -1,5 +1,5 @@
 name: Module-Install-RTx
-version: 0.05
+version: 0.06
 abstract: RT extension installer
 license: perl
 distribution_type: module
@@ -8,4 +8,4 @@ requires:
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.31
+generated_by: Module::Install version 0.33
