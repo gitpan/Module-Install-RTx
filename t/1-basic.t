@@ -1,5 +1,4 @@
-# $File: //member/autrijus/Module-Install-RTx/t/1-basic.t $ $Author: autrijus $
-# $Revision: #1 $ $Change: 9316 $ $DateTime: 2003/12/15 05:03:39 $
+#!/usr/bin/perl
 
 print "1..1\n";
 

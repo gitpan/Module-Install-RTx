@@ -1,103 +1,57 @@
-____________________________________________________________________________
-[ 10722] By: autrijus                              on 2004/05/31  16:38:57
-        Log: * This be 0.08.
-             * "make initdb" now moved to M::I::RTx::Factory, so the
-	       person
-             running "perl Makefile.PL" needs not have permission to
-	     read
-             RT_SiteConfig.pm.
-             * M::I::RTx::Factory now survives pod-stripping.
-	   ! lib/Module/Install/RTx.pm
-	   ! lib/Module/Install/RTx/Factory.pm
-____________________________________________________________________________
-[ 10721] By: autrijus                              on 2004/05/31  13:42:40
-        Log: * Jesse reports that RTx('RT-Foo-Bar') breaks.
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[ 10600] By: autrijus                              on 2004/05/15  06:07:57
-        Log: * Improve table detection in Pg.
-             * Better handling failed require() on _Overlay classes
-             in the factory.
-	   ! lib/Module/Install/RTx/Factory.pm
-____________________________________________________________________________
-[ 10598] By: autrijus                              on 2004/05/13  01:27:54
-        Log: * This be 0.07.
-             * Need to use RT::LoadConfig instead of requiring
-             the config files directly.  Oops.
-             Reported by: Jesse Vincent
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[ 10587] By: autrijus                              on 2004/05/10  18:23:01
-        Log: * fix manifest
-	   ! MANIFEST
-____________________________________________________________________________
-[ 10586] By: autrijus                              on 2004/05/10  16:39:52
-        Log: * This be 0.06.
-             * Support "make factory", "make initdb", "make dropdb"
-             for extensions that has its own initialdata and schema.
-	   + lib/Module/Install/RTx/Factory.pm
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9841] By: autrijus                              on 2004/02/01  20:07:17
-        Log: * This be 0.05.
-             * Now installs libs to $RT::LocalPath/lib instead of
-             perl's sitelib.
-             * Now properly skips lib installation when WITH_SUBDIRS
-             does not include lib.
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9831] By: autrijus                              on 2004/02/01  15:55:08
-        Log: * allow overriding prefix with $ENV{PREFIX}
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9652] By: autrijus                              on 2004/01/10  13:48:42
-        Log: * This be 0.04.
-             * Update copyright years.
-	   ! README lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9643] By: autrijus                              on 2004/01/10  08:46:06
-        Log: * make var directory writable
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9428] By: autrijus                              on 2003/12/25  13:19:26
-        Log: * Some people insist on doing "make initialize-database"
-             before "make install".	Fancy that.
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9412] By: autrijus                              on 2003/12/25  09:13:55
-        Log: * now add include path too.
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9411] By: autrijus                              on 2003/12/25  09:09:16
-        Log: * be extra careful on win32.
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9409] By: autrijus                              on 2003/12/25  09:02:40
-        Log: * add etc/initialdata insertion.
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9348] By: autrijus                              on 2003/12/19  03:47:59
-        Log: * take care of "inplace" layout by also probing in
-	       lib/RT.pm.
-             * now takes WITH_SUBDIRS to restrict the subdirectories to
-	       install.
-             * some POD cleanups.
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9320] By: autrijus                              on 2003/12/15  06:14:33
-        Log: * add proper no_index.
-	   ! lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9317] By: autrijus                              on 2003/12/15  05:10:12
-        Log: * need to depend on Module::Install::Admin, as 
-             Module::Install always satisfies itself.
-	   ! Makefile.PL
-____________________________________________________________________________
-[  9316] By: autrijus                              on 2003/12/15  05:03:39
-        Log: * This be 0.01, first CPAN release.
-	   + MANIFEST README t/0-signature.t t/1-basic.t
-	   ! Makefile.PL lib/Module/Install/RTx.pm
-____________________________________________________________________________
-[  9315] By: autrijus                              on 2003/12/15  04:29:20
-        Log: * initial checkin for Module::Install::RTx.
-	   + Makefile.PL lib/Module/Install/RTx.pm
+[Changes for 0.09 - 2004-09-09]
+
+* Moved under SVK management; remove all keyword expansion lines.
+
+* Corrected the use of $ENV{RTHOME} and documented it.
+
+[Changes for 0.08 - 2004-05-31]
+
+* "make initdb" now moved to M::I::RTx::Factory, so the person
+  running "perl Makefile.PL" needs not have permission to read
+  RT_SiteConfig.pm.
+
+* M::I::RTx::Factory now survives pod-stripping.
+
+* Jesse reports that RTx('RT-Foo-Bar') breaks.
+
+* Improve table detection in Pg.
+
+* Better handling failed require() on _Overlay classes in the factory.
+
+[Changes for 0.07 - 2004-05-13]
+
+* Need to use RT::LoadConfig instead of requiring the config files directly.
+  Reported by: Jesse Vincent
+
+[Changes for 0.06 - 2004-05-10]
+
+* Support "make factory", "make initdb", "make dropdb"
+  for extensions that has its own initialdata and schema.
+
+[Changes for 0.05 - 2004-02-01]
+
+* Now installs libs to $RT::LocalPath/lib instead of perl's sitelib.
+
+* Now properly skips lib installation when WITH_SUBDIRS does not include lib.
+
+* Allow overriding prefix with $ENV{PREFIX}
+
+[Changes for 0.04 - 2004-01-10]
+
+* Update copyright years.
+
+* Make var/ directory writable
+
+* Some people insist on doing "make initialize-database" before "make install".
+
+* Add etc/initialdata insertion.
+
+* Take care of "inplace" layout by also probing in lib/RT.pm.
+
+* Now takes WITH_SUBDIRS to restrict the subdirectories to install.
+
+* Some POD cleanups.
+
+[Changes for 0.01 - 2003-12-15]
+
+* Initial release.

@@ -1,6 +1,3 @@
-# $File: //member/autrijus/Module-Install-RTx/Makefile.PL $ $Author: autrijus $
-# $Revision: #3 $ $Change: 9317 $ $DateTime: 2003/12/15 05:10:12 $
-
 use inc::Module::Install;
 
 name	    ('Module-Install-RTx');

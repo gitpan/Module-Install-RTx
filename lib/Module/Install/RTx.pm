@@ -1,10 +1,7 @@
-# $File: //member/autrijus/Module-Install-RTx/lib/Module/Install/RTx.pm $ $Author: autrijus $
-# $Revision: #17 $ $Change: 10722 $ $DateTime: 2004/05/31 16:38:57 $ vim: expandtab shiftwidth=4
-
 package Module::Install::RTx;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 
-$Module::Install::RTx::VERSION = '0.08';
+$Module::Install::RTx::VERSION = '0.09';
 
 use strict;
 use FindBin;
@@ -36,11 +33,11 @@ sub RTx {
     else {
         local @INC = (
             @INC,
-            $ENV{RTHOME},
+            $ENV{RTHOME} ? ($ENV{RTHOME}, "$ENV{RTHOME}/lib") : (),
             map {( "$_/rt3/lib", "$_/lib/rt3", "$_/lib" )} grep $_, @prefixes
         );
         until ( eval { require RT; $RT::LocalPath } ) {
-            warn "Cannot find the location of RT.pm that defines \$RT::LocalPath. ($@)\n";
+            warn "Cannot find the location of RT.pm that defines \$RT::LocalPath in: @INC\n";
             $_ = $self->prompt("Path to your RT.pm:") or exit;
             push @INC, $_, "$_/rt3/lib", "$_/lib/rt3";
         }
@@ -160,8 +157,8 @@ Module::Install::RTx - RT extension installer
 
 =head1 VERSION
 
-This document describes version 0.08 of Module::Install::RTx, released
-June 1, 2004.
+This document describes version 0.09 of Module::Install::RTx, released
+September 9, 2004.
 
 =head1 SYNOPSIS
 
@@ -210,6 +207,16 @@ Alternatively, you can also specify the list as a command-line option to
 C<Makefile.PL>, like this:
 
     perl Makefile.PL WITH_SUBDIRS=sbin
+
+=head1 ENVIRONMENT
+
+=over 4
+
+=item RTHOME
+
+Path to the RT installation that contains a valid F<lib/RT.pm>.
+
+=cut
 
 =head1 SEE ALSO
 
