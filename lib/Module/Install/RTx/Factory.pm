@@ -2,6 +2,36 @@ package Module::Install::RTx::Factory;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 
 use strict;
+use File::Basename ();
+
+sub RTxInitDB {
+    my ($self, $action) = @_;
+
+    unshift @INC, substr(delete($INC{'RT.pm'}), 0, -5) if $INC{'RT.pm'};
+
+    require RT;
+    $RT::SbinPath ||= $RT::LocalPath;
+    $RT::SbinPath =~ s/local$/sbin/;
+
+    foreach my $file ($RT::CORE_CONFIG_FILE, $RT::SITE_CONFIG_FILE) {
+        next if !-e $file or -r $file;
+        die "No permission to read $file\n-- please re-run $0 with suitable privileges.\n";
+    }
+
+    RT::LoadConfig();
+
+    my $lib_path = File::Basename::dirname($INC{'RT.pm'});
+    my @args = (
+        "-Ilib", "-I$lib_path",
+        "$RT::SbinPath/rt-setup-database",
+        "--action"      => $action,
+        "--datadir"     => "etc",
+        "--datafile"    => "etc/initialdata",
+        "--dba"         => $RT::DatabaseUser,
+    );
+    print "$^X @args\n";
+    (system($^X, @args) == 0) or die "...returned with error: $?\n";
+}
 
 sub RTxFactory {
     my ($self, $RTx, $name, $drop) = @_;
@@ -66,6 +96,8 @@ use strict;
     $typemap{'LastUpdated'}   = 'auto';
     $typemap{'LastUpdatedBy'} = 'auto';
 
+    $typemap{lc($_)} = $typemap{$_} for keys %typemap;
+
     foreach my $table (@tables) {
 	if ($drop) {
 	    $dbh->do("DROP TABLE $table");
@@ -110,7 +142,7 @@ use strict;
   SELECT a.attname, format_type(a.atttypid, a.atttypmod),
          a.attnotnull, a.atthasdef, a.attnum
     FROM pg_class c, pg_attribute a
-   WHERE c.relname = '$table'
+   WHERE c.relname ILIKE '$table'
          AND a.attnum > 0
          AND a.attrelid = c.oid
 ORDER BY a.attnum
@@ -174,8 +206,8 @@ SELECT substring(d.adsrc for 128)
 	    $ClassAccessible .= " type => '$type', default => '$default'},\n";
 
 	    #generate pod for the accessible fields
-	    $FieldsPod .= <<".";
-=head2 $field
+	    $FieldsPod .= $self->_pod(<<".");
+^head2 $field
 
 Returns the current value of $field. 
 (In the database, $field is stored as $type.)
@@ -183,9 +215,9 @@ Returns the current value of $field.
 .
 
 	    unless ( $typemap{$field} eq 'auto' || $typemap{$field} eq 'ro' ) {
-		$FieldsPod .= <<".";
+		$FieldsPod .= $self->_pod(<<".");
 
-=head2 Set$field VALUE
+^head2 Set$field VALUE
 
 
 Set $field to VALUE. 
@@ -195,19 +227,19 @@ Returns (1, 'Status message') on success and (0, 'Error Message') on failure.
 .
 	    }
 
-	    $FieldsPod .= <<".";
-=cut
+	    $FieldsPod .= $self->_pod(<<".");
+^cut
 
 .
 
 	    if ( $modulemap{$field} ) {
-		$FieldsPod .= <<".";
-=head2 ${field}Obj
+		$FieldsPod .= $self->_pod(<<".");
+^head2 ${field}Obj
 
 Returns the $modulemap{$field} Object which has the id returned by $field
 
 
-=cut
+^cut
 
 sub ${field}Obj {
 	my \$self = shift;
@@ -250,22 +282,22 @@ $CreateOutParams);
 .
 	$CreatePod .= "\n=cut\n\n";
 
-	my $CollectionClass = $LicenseBlock . $Attribution . << "." . _magic_import($RecordClassName);
+	my $CollectionClass = $LicenseBlock . $Attribution . $self->_pod(<<".") . $self->_magic_import($CollectionClassName);
 
-=head1 NAME
+^head1 NAME
 
 $CollectionClassName -- Class Description
 
-=head1 SYNOPSIS
+^head1 SYNOPSIS
 
 use $CollectionClassName
 
-=head1 DESCRIPTION
+^head1 DESCRIPTION
 
 
-=head1 METHODS
+^head1 METHODS
 
-=cut
+^cut
 
 package $CollectionClassName;
 
@@ -285,7 +317,7 @@ sub _Init {
 
     if ( $fields{'SortOrder'} ) {
 
-	$CollectionClass .= <<".";
+	$CollectionClass .= $self->_pod(<<".");
 
 # By default, order by name
 \$self->OrderBy( ALIAS => 'main',
@@ -293,16 +325,16 @@ sub _Init {
 		ORDER => 'ASC');
 .
     }
-    $CollectionClass .= <<".";
+    $CollectionClass .= $self->_pod(<<".");
     return ( \$self->SUPER::_Init(\@_) );
 }
 
 
-=head2 NewItem
+^head2 NewItem
 
 Returns an empty new $RecordClassName item
 
-=cut
+^cut
 
 sub NewItem {
     my \$self = shift;
@@ -312,18 +344,18 @@ sub NewItem {
 
     my $RecordClassHeader = $Attribution . "
 
-=head1 NAME
+^head1 NAME
 
 $RecordClassName
 
 
-=head1 SYNOPSIS
+^head1 SYNOPSIS
 
-=head1 DESCRIPTION
+^head1 DESCRIPTION
 
-=head1 METHODS
+^head1 METHODS
 
-=cut
+^cut
 
 package $RecordClassName;
 use $RecordBaseclass; 
@@ -346,11 +378,11 @@ my \$self = shift;
 
 .
 
-    my $RecordClass = $LicenseBlock .  $RecordClassHeader . <<".";
+    my $RecordClass = $LicenseBlock . $RecordClassHeader . $self->_pod(<<".") . $self->_magic_import($RecordClassName);
 
 $RecordInit
 
-=head2 Create PARAMHASH
+^head2 Create PARAMHASH
 
 Create takes a hash of values and creates a row in the database:
 
@@ -384,7 +416,8 @@ $ClassAccessible
 }
 
 sub _magic_import {
-    my $class = shift;
+    my $self = shift;
+    my $class = ref($self) || $self;
 
     #if (exists \$warnings::{unimport})  {
     #        no warnings qw(redefine);
@@ -393,26 +426,26 @@ sub _magic_import {
     $path =~ s#::#/#gi;
 
 
-    my $content = <<".";
-        eval \"require @{[$class]}_Overlay\";
-        if (\$@ && \$@ !~ qr{^Can't locate ".$path."_Overlay.pm}) {
+    my $content = $self->_pod(<<".");
+        eval \"require ${class}_Overlay\";
+        if (\$@ && \$@ !~ qr{^Can't locate ${path}_Overlay.pm}) {
             die \$@;
         };
 
-        eval \"require @{[$class]}_Vendor\";
-        if (\$@ && \$@ !~ qr{^Can't locate ".$path."_Vendor.pm}) {
+        eval \"require ${class}_Vendor\";
+        if (\$@ && \$@ !~ qr{^Can't locate ${path}_Vendor.pm}) {
             die \$@;
         };
 
-        eval \"require @{[$class]}_Local\";
-        if (\$@ && \$@ !~ qr{^Can't locate ".$path."_Local.pm}) {
+        eval \"require ${class}_Local\";
+        if (\$@ && \$@ !~ qr{^Can't locate ${path}_Local.pm}) {
             die \$@;
         };
 
 
 
 
-=head1 SEE ALSO
+^head1 SEE ALSO
 
 This class allows \"overlay\" methods to be placed
 into the following files _Overlay is for a System overlay by the original author,
@@ -426,13 +459,19 @@ If you'll be working with perl 5.6.0 or greater, each of these files should begi
 
 so that perl does not kick and scream when you redefine a subroutine or variable in your overlay.
 
-@{[$class]}_Overlay, @{[$class]}_Vendor, @{[$class]}_Local
+${class}_Overlay, ${class}_Vendor, ${class}_Local
 
-=cut
+^cut
 
 
 1;
 .
 
     return $content;
+}
+
+sub _pod {
+    my ($self, $text) = @_;
+    $text =~ s/^\^/=/mg;
+    return $text;
 }
