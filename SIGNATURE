@@ -14,9 +14,9 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 1e530d9ba0755c7e12bb0a95c410fccd335eab81 Changes
+SHA1 6cc77616a34ad4b594d5fdd0be7eb87ad6179cc5 Changes
 SHA1 3560a4f3080832ac4fa5a046e0dc24304948af7b MANIFEST
-SHA1 ac23068165507c7bcdf40d2862ec7271800424b8 META.yml
+SHA1 5a4e8e07978f31892d6745bc03d3690ff882c0f1 META.yml
 SHA1 3f9c13bb43055656deebc46cb2cfc7c5be7d91c2 Makefile.PL
 SHA1 2099383679b5025ed1175d8ddc14b0e837e5e8f1 README
 SHA1 2b65fc08c268c16ae7097d800bacccc7b8c9c905 inc/Module/Install.pm
@@ -24,14 +24,14 @@ SHA1 fd56d5c793014bccac2cd1e61926c4da8538ef99 inc/Module/Install/Base.pm
 SHA1 aabcd47178e4e7b27e340ff5273269c93697c9c1 inc/Module/Install/Makefile.pm
 SHA1 207dfa13341a374fc78325fbeb99bc36659aef2d inc/Module/Install/Metadata.pm
 SHA1 8e0d347ca21bc18b380d9d1aa5910b8d078a76b7 inc/Module/Install/WriteAll.pm
-SHA1 be165c718c25ad76070d31a95e83b7c9c94792b6 lib/Module/Install/RTx.pm
+SHA1 230299f8cfea3ffeec4b9f5ad4d13ee3cf294b64 lib/Module/Install/RTx.pm
 SHA1 0671d8869b7866d66fd4daddb8befed1a32e727e lib/Module/Install/RTx/Factory.pm
 SHA1 f60bf0bcd448c31b0d0f9fc2b98d6bbdd8e0637b t/0-signature.t
 SHA1 fd52c79853935c729caed33532ee8971b4b1e58d t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (FreeBSD)
 
-iD8DBQFAn8hdtLPdNzw1AaARAty0AJ0U5fo5cIuzQkOL+5dh4Yn/VzgbQACgo1Z4
-CPFo+lfPUC4GV+FulSbERMY=
-=+z9Z
+iD8DBQFAos9EtLPdNzw1AaARAnTHAKC6s4FKDlicVmXXMBrNeENPUqJ8QgCfUe9/
+G7sFqz4pYw4hfhmzdKf7q4Q=
+=1P0g
 -----END PGP SIGNATURE-----

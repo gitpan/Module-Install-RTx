@@ -1,10 +1,10 @@
 # $File: //member/autrijus/Module-Install-RTx/lib/Module/Install/RTx.pm $ $Author: autrijus $
-# $Revision: #14 $ $Change: 10586 $ $DateTime: 2004/05/10 16:39:52 $ vim: expandtab shiftwidth=4
+# $Revision: #15 $ $Change: 10598 $ $DateTime: 2004/05/13 01:27:54 $ vim: expandtab shiftwidth=4
 
 package Module::Install::RTx;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 
-$Module::Install::RTx::VERSION = '0.06';
+$Module::Install::RTx::VERSION = '0.07';
 
 use strict;
 use FindBin;
@@ -44,8 +44,7 @@ sub RTx {
         }
 
         package RT;
-        require $RT::SITE_CONFIG_FILE;
-        require $RT::CORE_CONFIG_FILE;
+        RT::LoadConfig();
     }
 
     my $lib_path = dirname($INC{'RT.pm'});
@@ -165,7 +164,8 @@ Module::Install::RTx - RT extension installer
 
 =head1 VERSION
 
-This document describes version 0.04 of PAR, released January 10, 2004.
+This document describes version 0.07 of Module::Install::RTx, released
+May 13, 2004.
 
 =head1 SYNOPSIS
 
