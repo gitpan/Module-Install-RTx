@@ -1,8 +1,9 @@
 --- 
 abstract: RT extension installer
-author: Audrey Tang <cpan@audreyt.org>
+author: 
+  - Audrey Tang <cpan@audreyt.org>
 distribution_type: module
-generated_by: Module::Install version 0.67
+generated_by: Module::Install version 0.68
 license: mit
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -15,10 +16,10 @@ no_index:
 provides: 
   Module::Install::RTx: 
     file: lib/Module/Install/RTx.pm
-    version: 0.21
+    version: 0.22
   Module::Install::RTx::Factory: 
     file: lib/Module/Install/RTx/Factory.pm
 requires: 
   Module::Install::Admin: 0.4
   perl: 5.8.0
-version: 0.21
+version: 0.22

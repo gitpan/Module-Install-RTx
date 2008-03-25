@@ -1,3 +1,8 @@
+[Changes for 0.22 2008-03-25]
+
+* Add local lib path to the @INC when we call any script that may
+  load RT config.
+
 [Changes for 0.21 2007-12-07]
 
 * LICENSING CHANGE: This compilation and all individual files in it
@@ -9,7 +14,7 @@
 * Bump dependency of Module::Install::Admin to 0.40, so we can make use of
   all_from() and drop the parentheses in Makefile.PL commands.
 
-[Changes for 0.20 2007-12-05]
+[ Changes for 0.20 2007-12-05]
 
 * Support for new RT 3.7 "RT Plugin" mechanism.
 

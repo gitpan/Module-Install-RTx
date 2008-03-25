@@ -14,24 +14,24 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 b8ebdd4a96f00cb028bb46c784d5ed39ea98bcfc Changes
+SHA1 3468f76db532d5f4b23bd6525effe48237f9fb50 Changes
 SHA1 3560a4f3080832ac4fa5a046e0dc24304948af7b MANIFEST
-SHA1 13642da404c37015ed4868c88a947633c98770d4 META.yml
+SHA1 cd66688310a1fd723042900c2a728ff313725e1f META.yml
 SHA1 e795fcd38448d76596b2d83b113590a20477d274 Makefile.PL
 SHA1 b35bd024798238afa21ef09c1fc46831a5d6d6ef README
-SHA1 78edb89a439463e44c33a72bbee84c54d0dc8aaf inc/Module/Install.pm
-SHA1 8ea4e37df83fd0c1c050be5c8da75545c3828d9b inc/Module/Install/Base.pm
-SHA1 2054450e1e9c1dd8056362bf4a64ae70d5d71476 inc/Module/Install/Makefile.pm
-SHA1 5d6189b2cad15cf9932a28faafd55130c8247e83 inc/Module/Install/Metadata.pm
-SHA1 3a2eab96e91cca8d99938cda7791759ae9d97b3a inc/Module/Install/WriteAll.pm
-SHA1 ae7a2e55f8c74b39f38f5a1d48c6c92ba93b8512 lib/Module/Install/RTx.pm
+SHA1 7e2cfa1b9efe0d502ee57717649c90ba4bd28ba9 inc/Module/Install.pm
+SHA1 6e1392d80a0f239eecd5664f7f21f922cedb9329 inc/Module/Install/Base.pm
+SHA1 54fcbed19232ec959bb17cfb4410599afc7f0779 inc/Module/Install/Makefile.pm
+SHA1 7d3be9b158e37b2b2c22084740099955623b1d56 inc/Module/Install/Metadata.pm
+SHA1 d3352eb33fe43a5f3ead513f645224fe34d73bc9 inc/Module/Install/WriteAll.pm
+SHA1 15361c53b83183e72ed9c1f1296da59eb1cf0dda lib/Module/Install/RTx.pm
 SHA1 741078c0d7cb2b5a8bec5369a1f4dc518973ac41 lib/Module/Install/RTx/Factory.pm
 SHA1 41afe2c04bb573b40e283e2b210ed70a47a3f8ba t/0-signature.t
 SHA1 d1273fb540399cb1cb61dc519c34315dfdf7b15a t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.3 (Darwin)
+Version: GnuPG v1.4.8 (GNU/Linux)
 
-iD8DBQFHWKzhtLPdNzw1AaARAsN+AJ4rMqq3HKS3JNonpEW5EK+L6nElFACfVsfW
-/V8nUSyVUfTRGbp8w6OixzU=
-=kw5I
+iEYEARECAAYFAkfoTfcACgkQvH6dkeDZaS9IrgCdG/AYh7aqec8rizrzMlc17WVE
+GKAAn0ALOciJQUAWU4aq8bQk7Jv0fwaf
+=ksV4
 -----END PGP SIGNATURE-----
