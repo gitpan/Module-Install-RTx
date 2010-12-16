@@ -7,7 +7,7 @@ no warnings 'once';
 
 use Module::Install::Base;
 use base 'Module::Install::Base';
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 use FindBin;
 use File::Glob     ();
@@ -59,6 +59,7 @@ sub RTx {
     my $local_lib_path = "$RT::LocalPath/lib";
     print "Using RT configuration from $INC{'RT.pm'}:\n";
     unshift @INC, "$RT::LocalPath/lib" if $RT::LocalPath;
+    unshift @INC, $lib_path;
 
     $RT::LocalVarPath  ||= $RT::VarPath;
     $RT::LocalPoPath   ||= $RT::LocalLexiconPath;
