@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.70.
+signed via the Module::Signature module, version 0.73.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,9 +14,9 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 817f5d163cf5693dcbe1a2f59fc84a1e5a420211 Changes
+SHA1 e042b6895f12b665159c2bef74d3c93fc0c44029 Changes
 SHA1 6dbae46dda29b96fe50e3b6dc7e3cc975d4ba728 MANIFEST
-SHA1 99bc62a525f8ad8f5e79cda94b9f65b0e8d6e32e META.yml
+SHA1 5da89daa64a9586211290244a4079710158f3710 META.yml
 SHA1 e795fcd38448d76596b2d83b113590a20477d274 Makefile.PL
 SHA1 87031348c98eb2fbd35063d62341f9ae2f11d3f9 README
 SHA1 8a924add836b60fb23b25c8506d45945e02f42f4 inc/Module/Install.pm
@@ -24,14 +24,14 @@ SHA1 2d0fad3bf255f8c1e7e1e34eafccc4f595603ddc inc/Module/Install/Base.pm
 SHA1 b62ca5e2d58fa66766ccf4d64574f9e1a2250b34 inc/Module/Install/Makefile.pm
 SHA1 1aa925be410bb3bfcd84a16985921f66073cc1d2 inc/Module/Install/Metadata.pm
 SHA1 c3a6d0d5b84feb3280622e9599e86247d58b0d18 inc/Module/Install/WriteAll.pm
-SHA1 e79425ca42e51a459385bbdc1d9f7df0ab1f505f lib/Module/Install/RTx.pm
-SHA1 432ca9f24407c44aea464f6d978ec91ef23c827b lib/Module/Install/RTx/Factory.pm
+SHA1 fa0a68c3b205aa0257050cfe60cddb910484755a lib/Module/Install/RTx.pm
+SHA1 2f9b495b8d73b80b17c13b1ad2934f720a0ea4de lib/Module/Install/RTx/Factory.pm
 SHA1 d1273fb540399cb1cb61dc519c34315dfdf7b15a t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (Darwin)
 Comment: GPGTools - http://gpgtools.org
 
-iEYEARECAAYFAlFjB6IACgkQ0+gKWp5CJQrY5QCfb/tTBL+SDXOmcVHgWczNs21B
-NAQAn3je3JAM5pXvKxt0aMvdUPi+icZH
-=lYNT
+iEYEARECAAYFAlIp+QMACgkQ0+gKWp5CJQpO9gCgzsvHgtBBfJh0IOl42dPJ82YS
+tJsAoNZfnLInSxOUDNwcnuNLjWBtzFrU
+=V2ul
 -----END PGP SIGNATURE-----
