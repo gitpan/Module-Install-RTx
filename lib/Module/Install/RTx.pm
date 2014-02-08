@@ -7,7 +7,7 @@ no warnings 'once';
 
 use Module::Install::Base;
 use base 'Module::Install::Base';
-our $VERSION = '0.32';
+our $VERSION = '0.32_01';
 
 use FindBin;
 use File::Glob     ();
@@ -173,42 +173,46 @@ install ::
     }
 }
 
-# stolen from RT::Handle so we work on 3.6 (cmp_versions came in with 3.8)
-{ my %word = (
-    a     => -4,
-    alpha => -4,
-    b     => -3,
-    beta  => -3,
-    pre   => -2,
-    rc    => -1,
-    head  => 9999,
-);
-sub cmp_version($$) {
-    my ($a, $b) = (@_);
-    my @a = grep defined, map { /^[0-9]+$/? $_ : /^[a-zA-Z]+$/? $word{$_}|| -10 : undef }
-        split /([^0-9]+)/, $a;
-    my @b = grep defined, map { /^[0-9]+$/? $_ : /^[a-zA-Z]+$/? $word{$_}|| -10 : undef }
-        split /([^0-9]+)/, $b;
-    @a > @b
-        ? push @b, (0) x (@a-@b)
-        : push @a, (0) x (@b-@a);
-    for ( my $i = 0; $i < @a; $i++ ) {
-        return $a[$i] <=> $b[$i] if $a[$i] <=> $b[$i];
-    }
-    return 0;
-}}
 sub requires_rt {
     my ($self,$version) = @_;
 
     # if we're exactly the same version as what we want, silently return
     return if ($version eq $RT::VERSION);
 
-    my @sorted = sort cmp_version $version,$RT::VERSION;
+    _load_rt_handle();
+    my @sorted = sort RT::Handle::cmp_version $version,$RT::VERSION;
 
     if ($sorted[-1] eq $version) {
         # should we die?
-        warn "\nWarning: prerequisite RT $version not found. Your installed version of RT ($RT::VERSION) is too old.\n\n";
+        die "\nWarning: prerequisite RT $version not found. Your installed version of RT ($RT::VERSION) is too old.\n\n";
     }
+}
+
+sub rt_too_new {
+    my ($self,$version,$msg) = @_;
+    $msg ||= "Your version %s is too new, this extension requires a release of RT older than %s";
+
+    _load_rt_handle();
+    my @sorted = sort RT::Handle::cmp_version $version,$RT::VERSION;
+
+    if ($sorted[0] eq $version) {
+        die sprintf($msg,$RT::VERSION,$version);
+    }
+}
+
+# RT::Handle runs FinalizeDatabaseType which calls RT->Config->Get
+# On 3.8, this dies.  On 4.0/4.2 ->Config transparently runs LoadConfig.
+# LoadConfig requires being able to read RT_SiteConfig.pm (root) so we'd
+# like to avoid pushing that on users.
+# Fake up just enough Config to let FinalizeDatabaseType finish, and
+# anyone later calling LoadConfig will overwrite our shenanigans.
+sub _load_rt_handle {
+    unless ($RT::Config) {
+        require RT::Config;
+        $RT::Config = RT::Config->new;
+        RT->Config->Set('DatabaseType','mysql');
+    }
+    require RT::Handle;
 }
 
 1;
@@ -231,11 +235,11 @@ optionally add a
 
     requires_rt('3.8.9');
 
-to warn if your RT version is too old during install
+to die if your RT version is too old during install
 
 =head1 DESCRIPTION
 
-This B<Module::Install> extension implements one function, C<RTx>,
+This B<Module::Install> extension implements a function, C<RTx>,
 that takes the extension name as the only argument.
 
 It arranges for certain subdirectories to install into the installed
@@ -269,6 +273,23 @@ C<Makefile.PL>, like this:
 
     perl Makefile.PL WITH_SUBDIRS=sbin
 
+This module also provides the following helper functions
+
+=head2 requires_rt
+
+Takes one argument, a valid RT version. If an attempt is made to install
+on an older RT, it will die before Makefile creation.
+
+=head2 rt_too_new
+
+Takes an RT version and prevents this module from being installed on any
+version of RT equal to or newer than that.  Useful if a particular release of an
+extension only works on 4.0.x but not 4.2.x.
+
+Takes an optional second argument which allows you to specify a custom
+error message. This message is passed to sprintf with two string
+arguments, the current RT version and the version you specify.
+
 =head1 CAVEATS
 
 =over 4
@@ -278,7 +299,7 @@ implemented in this installer to support RTx('Foo') for 'RTx-Foo' extension, but
 life proved that it's bad idea. Code still there for backwards compatibility.
 It will be deleted eventually.
 
-=item * installer want work with RT 3.8.0, as it has some bugs new plugins
+=item * installer won't work with RT 3.8.0, as it has some bugs new plugins
 sub-system.
 
 =item * layout of files has been changed between RT 3.6 and RT 3.8, old files
@@ -305,11 +326,14 @@ L<http://www.bestpractical.com/rt/>
 
 =head1 AUTHORS
 
-Audrey Tang <cpan@audreyt.org>
+Best Practical Solutions
+
+(Originally) Audrey Tang <cpan@audreyt.org>
 
 =head1 COPYRIGHT
 
 Copyright 2003, 2004, 2007 by Audrey Tang E<lt>cpan@audreyt.orgE<gt>.
+Copyright 2008-2014 Best Practical Solutions
 
 This software is released under the MIT license cited below.
 
