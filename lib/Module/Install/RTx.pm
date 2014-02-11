@@ -7,7 +7,7 @@ no warnings 'once';
 
 use Module::Install::Base;
 use base 'Module::Install::Base';
-our $VERSION = '0.32_01';
+our $VERSION = '0.32_02';
 
 use FindBin;
 use File::Glob     ();
@@ -135,7 +135,9 @@ install ::
         $has_etc{acl}++;
     }
     if ( -e 'etc/initialdata' ) { $has_etc{initialdata}++; }
-    if ( -d 'etc/upgrade/' )    { $has_etc{upgrade}++; }
+    if ( grep { /\d+\.\d+\.\d+.*$/ } glob('etc/upgrade/*.*.*') ) {
+        $has_etc{upgrade}++;
+    }
 
     $self->postamble("$postamble\n");
     unless ( $subdirs{'lib'} ) {
