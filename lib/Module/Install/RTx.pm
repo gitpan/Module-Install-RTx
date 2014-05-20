@@ -7,7 +7,7 @@ no warnings 'once';
 
 use Module::Install::Base;
 use base 'Module::Install::Base';
-our $VERSION = '0.33';
+our $VERSION = '0.34';
 
 use FindBin;
 use File::Glob     ();
@@ -87,6 +87,11 @@ sub RTx {
             ."Upgrade to RT 3.8.1 or newer.\n" if $RT::VERSION =~ /^3\.8\.0/;
         $path{$_} = $RT::LocalPluginPath . "/$original_name/$_"
             foreach @DIRS;
+
+        # Copy RT 4.2.0 static files into NoAuth; insufficient for
+        # images, but good enough for css and js.
+        $path{static} = "$path{html}/NoAuth/"
+            unless $RT::StaticPath;
     } else {
         foreach ( @DIRS ) {
             no strict 'refs';
