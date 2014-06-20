@@ -7,7 +7,7 @@ no warnings 'once';
 
 use Module::Install::Base;
 use base 'Module::Install::Base';
-our $VERSION = '0.34';
+our $VERSION = '0.34_03';
 
 use FindBin;
 use File::Glob     ();
@@ -19,98 +19,67 @@ my @INDEX_DIRS = qw(lib bin sbin);
 sub RTx {
     my ( $self, $name ) = @_;
 
-    my $original_name = $name;
-    my $RTx = 'RTx';
-    $RTx = $1 if $name =~ s/^(\w+)-//;
+    # Set up names
     my $fname = $name;
     $fname =~ s!-!/!g;
 
-    $self->name("$RTx-$name")
+    $self->name( $name )
         unless $self->name;
-    $self->all_from( -e "$name.pm" ? "$name.pm" : "lib/$RTx/$fname.pm" )
+    $self->all_from( "lib/$fname.pm" )
         unless $self->version;
-    $self->abstract("RT $name Extension")
+    $self->abstract("$name Extension")
         unless $self->abstract;
+    $self->add_metadata("x_module_install_rtx_version", $VERSION );
 
-    my @prefixes = (qw(/opt /usr/local /home /usr /sw ));
-    my $prefix   = $ENV{PREFIX};
-    @ARGV = grep { /PREFIX=(.*)/ ? ( ( $prefix = $1 ), 0 ) : 1 } @ARGV;
+    # Try to find RT.pm
+    my @prefixes = qw( /opt /usr/local /home /usr /sw );
+    my @try = $ENV{RTHOME} ? ($ENV{RTHOME}, "$ENV{RTHOME}/lib") : ();
+    while (1) {
+        my @look = @INC;
+        unshift @look, grep {defined and -d $_} @try;
+        push @look, grep {defined and -d $_}
+            map { ( "$_/rt4/lib", "$_/lib/rt4", "$_/lib" ) } @prefixes;
+        last if eval {local @INC = @look; require RT; $RT::LocalLibPath};
 
-    if ($prefix) {
-        $RT::LocalPath = $prefix;
-        $INC{'RT.pm'} = "$RT::LocalPath/lib/RT.pm";
-    } else {
-        local @INC = (
-            $ENV{RTHOME} ? ( $ENV{RTHOME}, "$ENV{RTHOME}/lib" ) : (),
-            @INC,
-            map { ( "$_/rt4/lib", "$_/lib/rt4", "$_/rt3/lib", "$_/lib/rt3", "$_/lib" )
-                } grep $_, @prefixes
-        );
-        until ( eval { require RT; $RT::LocalPath } ) {
-            warn
-                "Cannot find the location of RT.pm that defines \$RT::LocalPath in: @INC\n";
-            $_ = $self->prompt("Path to directory containing your RT.pm:") or exit;
-            $_ =~ s/\/RT\.pm$//;
-            push @INC, $_, "$_/rt3/lib", "$_/lib/rt3", "$_/lib";
-        }
+        warn
+            "Cannot find the location of RT.pm that defines \$RT::LocalPath in: @look\n";
+        $_ = $self->prompt("Path to directory containing your RT.pm:") or exit;
+        $_ =~ s{(/lib)?/RT\.pm$}{};
+        @try = ("$_/rt4/lib", "$_/lib/rt4", "$_/lib");
     }
 
-    my $lib_path = File::Basename::dirname( $INC{'RT.pm'} );
-    my $local_lib_path = "$RT::LocalPath/lib";
     print "Using RT configuration from $INC{'RT.pm'}:\n";
-    unshift @INC, "$RT::LocalPath/lib" if $RT::LocalPath;
+
+    my $local_lib_path = $RT::LocalLibPath;
+    unshift @INC, $local_lib_path;
+    my $lib_path = File::Basename::dirname( $INC{'RT.pm'} );
     unshift @INC, $lib_path;
 
-    $RT::LocalVarPath    ||= $RT::VarPath;
-    $RT::LocalPoPath     ||= $RT::LocalLexiconPath;
-    $RT::LocalHtmlPath   ||= $RT::MasonComponentRoot;
-    $RT::LocalStaticPath ||= $RT::StaticPath;
-    $RT::LocalLibPath    ||= "$RT::LocalPath/lib";
+    # Set a baseline minimum version
+    $self->requires_rt('4.0.0');
 
-    my $with_subdirs = $ENV{WITH_SUBDIRS};
-    @ARGV = grep { /WITH_SUBDIRS=(.*)/ ? ( ( $with_subdirs = $1 ), 0 ) : 1 }
-        @ARGV;
-
-    my %subdirs;
-    %subdirs = map { $_ => 1 } split( /\s*,\s*/, $with_subdirs )
-        if defined $with_subdirs;
-    unless ( keys %subdirs ) {
-        $subdirs{$_} = 1 foreach grep -d "$FindBin::Bin/$_", @DIRS;
-    }
-
-    # If we're running on RT 3.8 with plugin support, we really wany
-    # to install libs, mason templates and po files into plugin specific
-    # directories
+    # Installation locations
     my %path;
-    if ( $RT::LocalPluginPath ) {
-        die "Because of bugs in RT 3.8.0 this extension can not be installed.\n"
-            ."Upgrade to RT 3.8.1 or newer.\n" if $RT::VERSION =~ /^3\.8\.0/;
-        $path{$_} = $RT::LocalPluginPath . "/$original_name/$_"
-            foreach @DIRS;
+    $path{$_} = $RT::LocalPluginPath . "/$name/$_"
+        foreach @DIRS;
 
-        # Copy RT 4.2.0 static files into NoAuth; insufficient for
-        # images, but good enough for css and js.
-        $path{static} = "$path{html}/NoAuth/"
-            unless $RT::StaticPath;
-    } else {
-        foreach ( @DIRS ) {
-            no strict 'refs';
-            my $varname = "RT::Local" . ucfirst($_) . "Path";
-            $path{$_} = ${$varname} || "$RT::LocalPath/$_";
-        }
+    # Copy RT 4.2.0 static files into NoAuth; insufficient for
+    # images, but good enough for css and js.
+    $path{static} = "$path{html}/NoAuth/"
+        unless $RT::StaticPath;
 
-        $path{$_} .= "/$name" for grep $path{$_}, qw(etc po var);
-    }
+    # Delete the ones we don't need
+    delete $path{$_} for grep {not -d "$FindBin::Bin/$_"} keys %path;
 
     my %index = map { $_ => 1 } @INDEX_DIRS;
     $self->no_index( directory => $_ ) foreach grep !$index{$_}, @DIRS;
 
     my $args = join ', ', map "q($_)", map { ($_, $path{$_}) }
-        grep $subdirs{$_}, keys %path;
+        sort keys %path;
 
-    print "./$_\t=> $path{$_}\n" for sort keys %subdirs;
+    printf "%-10s => %s\n", $_, $path{$_} for sort keys %path;
 
-    if ( my @dirs = map { ( -D => $_ ) } grep $subdirs{$_}, qw(bin html sbin) ) {
+    if ( my @dirs = map { ( -D => $_ ) } grep $path{$_}, qw(bin html sbin etc) ) {
         my @po = map { ( -o => $_ ) }
             grep -f,
             File::Glob::bsd_glob("po/*.po");
@@ -120,12 +89,15 @@ lexicons ::
 .
     }
 
+    $self->include('Module::Install::RTx::Runtime') if $self->admin;
+    $self->include_deps( 'YAML::Tiny', 0 ) if $self->admin;
     my $postamble = << ".";
 install ::
+\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Iinc -MModule::Install::RTx::Runtime -e"RTxPlugin()"
 \t\$(NOECHO) \$(PERL) -MExtUtils::Install -e \"install({$args})\"
 .
 
-    if ( $subdirs{var} and -d $RT::MasonDataDir ) {
+    if ( $path{var} and -d $RT::MasonDataDir ) {
         my ( $uid, $gid ) = ( stat($RT::MasonDataDir) )[ 4, 5 ];
         $postamble .= << ".";
 \t\$(NOECHO) chown -R $uid:$gid $path{var}
@@ -145,11 +117,11 @@ install ::
     }
 
     $self->postamble("$postamble\n");
-    unless ( $subdirs{'lib'} ) {
-        $self->makemaker_args( PM => { "" => "" }, );
-    } else {
+    if ( $path{lib} ) {
         $self->makemaker_args( INSTALLSITELIB => $path{'lib'} );
         $self->makemaker_args( INSTALLARCHLIB => $path{'lib'} );
+    } else {
+        $self->makemaker_args( PM => { "" => "" }, );
     }
 
     $self->makemaker_args( INSTALLSITEMAN1DIR => "$RT::LocalPath/man/man1" );
@@ -157,47 +129,96 @@ install ::
     $self->makemaker_args( INSTALLSITEARCH => "$RT::LocalPath/man" );
 
     if (%has_etc) {
-        $self->load('RTxInitDB');
         print "For first-time installation, type 'make initdb'.\n";
         my $initdb = '';
         $initdb .= <<"." if $has_etc{schema};
-\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Minc::Module::Install -e"RTxInitDB(qw(schema \$(NAME) \$(VERSION)))"
+\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Iinc -MModule::Install::RTx::Runtime -e"RTxDatabase(qw(schema \$(NAME) \$(VERSION)))"
 .
         $initdb .= <<"." if $has_etc{acl};
-\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Minc::Module::Install -e"RTxInitDB(qw(acl \$(NAME) \$(VERSION)))"
+\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Iinc -MModule::Install::RTx::Runtime -e"RTxDatabase(qw(acl \$(NAME) \$(VERSION)))"
 .
         $initdb .= <<"." if $has_etc{initialdata};
-\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Minc::Module::Install -e"RTxInitDB(qw(insert \$(NAME) \$(VERSION)))"
+\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Iinc -MModule::Install::RTx::Runtime -e"RTxDatabase(qw(insert \$(NAME) \$(VERSION)))"
 .
         $self->postamble("initdb ::\n$initdb\n");
         $self->postamble("initialize-database ::\n$initdb\n");
         if ($has_etc{upgrade}) {
             print "To upgrade from a previous version of this extension, use 'make upgrade-database'\n";
-            my $upgradedb = qq|\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Minc::Module::Install -e"RTxInitDB(qw(upgrade \$(NAME) \$(VERSION)))"\n|;
+            my $upgradedb = qq|\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Iinc -MModule::Install::RTx::Runtime -e"RTxDatabase(qw(upgrade \$(NAME) \$(VERSION)))"\n|;
             $self->postamble("upgrade-database ::\n$upgradedb\n");
             $self->postamble("upgradedb ::\n$upgradedb\n");
         }
     }
+
 }
 
 sub requires_rt {
     my ($self,$version) = @_;
 
+    _load_rt_handle();
+
+    if ($self->is_admin) {
+        $self->add_metadata("x_requires_rt", $version);
+        my @sorted = sort RT::Handle::cmp_version $version,'4.0.0';
+        $self->perl_version('5.008003') if $sorted[0] eq '4.0.0'
+            and (not $self->perl_version or '5.008003' > $self->perl_version);
+        @sorted = sort RT::Handle::cmp_version $version,'4.2.0';
+        $self->perl_version('5.010001') if $sorted[0] eq '4.2.0'
+            and (not $self->perl_version or '5.010001' > $self->perl_version);
+    }
+
     # if we're exactly the same version as what we want, silently return
     return if ($version eq $RT::VERSION);
 
-    _load_rt_handle();
     my @sorted = sort RT::Handle::cmp_version $version,$RT::VERSION;
 
     if ($sorted[-1] eq $version) {
-        # should we die?
-        die "\nWarning: prerequisite RT $version not found. Your installed version of RT ($RT::VERSION) is too old.\n\n";
+        die <<"EOT";
+
+**** Error: This extension requires RT $version. Your installed version
+            of RT ($RT::VERSION) is too old.
+
+EOT
     }
+}
+
+sub requires_rt_plugin {
+    my $self = shift;
+    my ( $plugin ) = @_;
+
+    if ($self->is_admin) {
+        my $plugins = $self->{values}{"x_requires_rt_plugins"} || [];
+        push @{$plugins}, $plugin;
+        $self->add_metadata("x_requires_rt_plugins", $plugins);
+    }
+
+    my $path = $plugin;
+    $path =~ s{\:\:}{-}g;
+    $path = "$RT::LocalPluginPath/$path/lib";
+    if ( -e $path ) {
+        unshift @INC, $path;
+    } else {
+        my $name = $self->name;
+        warn <<"EOT";
+
+**** Warning: $name requires that the $plugin plugin be installed and
+              enabled; it does not appear to be installed.
+
+EOT
+    }
+    $self->requires(@_);
 }
 
 sub rt_too_new {
     my ($self,$version,$msg) = @_;
-    $msg ||= "Your version %s is too new, this extension requires a release of RT older than %s\n";
+    my $name = $self->name;
+    $msg ||= <<EOT;
+
+**** Error: Your installed version of RT (%s) is too new; this extension
+            only works with versions older than %s.
+
+EOT
+    $self->add_metadata("x_rt_too_new", $version) if $self->is_admin;
 
     _load_rt_handle();
     my @sorted = sort RT::Handle::cmp_version $version,$RT::VERSION;
@@ -232,66 +253,52 @@ Module::Install::RTx - RT extension installer
 
 =head1 SYNOPSIS
 
-In the F<Makefile.PL> of the C<RT-Extension-Foo> module:
+In the F<Makefile.PL> of the C<RT-Extension-Example> module:
 
     use inc::Module::Install;
-    RTx 'RT-Extension-Foo';
+    RTx 'RT-Extension-Example';
+
+    requires_rt '4.2.0';
+    rt_too_new  '4.4.0';
+
     WriteAll();
-
-optionally add a
-
-    requires_rt('3.8.9');
-
-to die if your RT version is too old during install
 
 =head1 DESCRIPTION
 
-This B<Module::Install> extension implements a function, C<RTx>,
-that takes the extension name as the only argument.
+This B<Module::Install> extension implements several functions for
+installing RT extensions:
 
-It arranges for certain subdirectories to install into the installed
-RT location, but does not affect the usual C<lib> and C<t> directories.
+=head2 RTx 'I<extension name>'
 
-The directory mapping table is as below:
+This function arranges for the following directories to be installed, if
+they exist (assuming C<RTx('RT-Extension-Example')>):
 
-    ./bin   => $RT::LocalPath/bin
-    ./etc   => $RT::LocalPath/etc/$NAME
-    ./html  => $RT::MasonComponentRoot
-    ./po    => $RT::LocalLexiconPath/$NAME
-    ./sbin  => $RT::LocalPath/sbin
-    ./var   => $RT::VarPath/$NAME
+    ./bin    => $RT::LocalPluginPath/RT-Extension-Example/bin
+    ./etc    => $RT::LocalPluginPath/RT-Extension-Example/etc
+    ./html   => $RT::LocalPluginPath/RT-Extension-Example/html
+    ./lib    => $RT::LocalPluginPath/RT-Extension-Example/lib
+    ./po     => $RT::LocalPluginPath/RT-Extension-Example/po
+    ./sbin   => $RT::LocalPluginPath/RT-Extension-Example/sbin
+    ./static => $RT::LocalPluginPath/RT-Extension-Example/static
+    ./var    => $RT::LocalPluginPath/RT-Extension-Example/var
 
-Under the default RT3 layout in F</opt> and with the extension name
-C<Foo>, it becomes:
-
-    ./bin   => /opt/rt3/local/bin
-    ./etc   => /opt/rt3/local/etc/Foo
-    ./html  => /opt/rt3/share/html
-    ./po    => /opt/rt3/local/po/Foo
-    ./sbin  => /opt/rt3/local/sbin
-    ./var   => /opt/rt3/var/Foo
-
-By default, all these subdirectories will be installed with C<make install>.
-you can override this by setting the C<WITH_SUBDIRS> environment variable to
-a comma-delimited subdirectory list, such as C<html,sbin>.
-
-Alternatively, you can also specify the list as a command-line option to
-C<Makefile.PL>, like this:
-
-    perl Makefile.PL WITH_SUBDIRS=sbin
-
-This module also provides the following helper functions
-
-=head2 requires_rt
+=head2 requires_rt I<version>
 
 Takes one argument, a valid RT version. If an attempt is made to install
-on an older RT, it will die before Makefile creation.
+on an RT than that version, it will die before Makefile creation.
 
-=head2 rt_too_new
+=head2 requires_rt_plugin I<RT::Extension::Example> [, I<version>]
 
-Takes an RT version and prevents this module from being installed on any
-version of RT equal to or newer than that.  Useful if a particular release of an
-extension only works on 4.0.x but not 4.2.x.
+Ensures that the given RT extension (and optional version) is installed
+in the target RT instance; C<requires> cannot be used because RT
+extensions are not in @INC.
+
+=head2 rt_too_new I<version> [, I<message>]
+
+Takes one argument, a valid RT version, and prevents this module from
+being installed on any version of RT equal to or newer than that.
+Useful if a particular release of an extension only works on 4.0.x but
+not 4.2.x.
 
 Takes an optional second argument which allows you to specify a custom
 error message. This message is passed to sprintf with two string
@@ -301,17 +308,10 @@ arguments, the current RT version and the version you specify.
 
 =over 4
 
-=item * Use full name when call RTx method in Makefile.PL, some magic has been
-implemented in this installer to support RTx('Foo') for 'RTx-Foo' extension, but
-life proved that it's bad idea. Code still there for backwards compatibility.
-It will be deleted eventually.
+=item *
 
-=item * installer won't work with RT 3.8.0, as it has some bugs new plugins
-sub-system.
-
-=item * layout of files has been changed between RT 3.6 and RT 3.8, old files
-may influence behaviour of your extension. Recommend people use clean dir on
-upgrade or guide how to remove old versions of your extension.
+Us the full name when calling RTx method in Makefile.PL; while
+C<RTx('Foo')> was once supported, it is no longer.
 
 =back
 
